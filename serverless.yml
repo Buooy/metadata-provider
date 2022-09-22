@@ -1,0 +1,31 @@
+service: metadata-provider-serverless
+
+plugins:
+  - serverless-plugin-typescript 
+  - serverless-plugin-optimize
+  - serverless-offline
+  # - serverless-plugin-warmup
+
+# custom:
+#   # Enable warmup on all functions (only for production and staging)
+#   warmup:      
+#       - production
+#       - staging
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+package:
+  individually: true
+
+functions:
+  main:
+    handler: src/main.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
