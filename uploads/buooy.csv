@@ -1,2 +1,2 @@
 id,image,external_url,description,name,attributes.0.trait_type,attributes.0.value,attributes.1.trait_type,attributes.1.value,attributes.2.trait_type,attributes.2.value,attributes.2.display_type
-0,https://image.com/0,https://url.com/0,test description,test name,Base,Starfish,Eyes,Big,Aqua Power,40,boost_number
+0,https://image.com/1,https://url.com/0,test description,test name,Base,Starfish,Eyes,Big,Aqua Power,40,boost_number

@@ -4,18 +4,26 @@ import csv from 'csvtojson';
 
 @Injectable()
 export class MetadataService {
-  async parseMetadata(name: string): Promise<string> {
-    const filepath = `${dirname(dirname(dirname(__filename)))}/metadata/${name}.csv`
-    const records = await csv().fromFile(filepath)
-    console.log(JSON.stringify(records));
-    return `${dirname(dirname(dirname(__filename)))}/metadata/${name}.csv`;
+  async parseMetadata(subject: string): Promise<Record<any, any>[]> {
+    try {
+      const filepath = `${dirname(dirname(dirname(__filename)))}/uploads/${subject}.csv`;
+      const records = await csv().fromFile(filepath);
+
+      return records;
+    } catch (error) {
+      console.error(error)
+      return [];
+    }
   }
   /*
   findAll() {
     return `This action returns all metadata`;
   }
   */
-  findOne(id: number) {
-    return `This action returns a #${id} metadatum`;
+  async findOne(subject: string, id: number|string): Promise<Record<any, any>|undefined> {
+    const metadata = await this.parseMetadata(subject);
+    const record = metadata.find(row => row.id === id);
+
+    return record
   }
 }

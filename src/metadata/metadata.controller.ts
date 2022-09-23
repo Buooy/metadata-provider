@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { MetadataService } from './metadata.service';
+import { NotFoundException } from '@nestjs/common';
 
-@Controller('metadata')
+@Controller('json')
 export class MetadataController {
   constructor(private readonly metadataService: MetadataService) {}
 
@@ -12,8 +13,11 @@ export class MetadataController {
   }
   */
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.metadataService.findOne(+id);
+  @Get(':subject/:id')
+  async findOne(@Param('subject') subject: string, @Param('id') id: string): Promise<Record<any, any>> {
+    const record = await this.metadataService.findOne(subject, id);
+
+    if (record === undefined) throw new NotFoundException();
+    return record;
   }
 }
