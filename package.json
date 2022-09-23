@@ -7,6 +7,7 @@
   "scripts": {
     "all": "concurrently -c green,blue,yellow",
     "build": "tsc -p tsconfig.build.json",
+    "deploy": "sls deploy",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "copyfiles uploads/**/* .build/ && sls offline",
     "lint": "npm run all \"npm:on-* lint\"",
@@ -23,8 +24,11 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^9.0.11",
     "@vendia/serverless-express": "^4.10.1",
+    "aws-sdk": "^2.1222.0",
+    "convict": "^6.2.3",
     "csv-parse": "^5.3.0",
     "csvtojson": "^2.0.10",
+    "nestjs-s3": "^1.0.1",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.6"

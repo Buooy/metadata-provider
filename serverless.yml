@@ -12,9 +12,17 @@ plugins:
 #       - production
 #       - staging
 
+useDotenv: true
+
 provider:
   name: aws
   runtime: nodejs12.x
+  stage: dev
+  region: ap-southeast-1
+  profile: metadata-provider-deployer
+  memorySize: 1024
+  timeout: 900
+  environment:
 
 package:
   individually: true
