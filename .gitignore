@@ -1,4 +1,6 @@
+env.localhost.yml
 /node_modules/
 /.build/
 /.serverless/
 /_warmup/
+uploads/*

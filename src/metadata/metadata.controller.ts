@@ -6,12 +6,13 @@ import { NotFoundException } from '@nestjs/common';
 export class MetadataController {
   constructor(private readonly metadataService: MetadataService) {}
 
-  /*
-  @Get()
-  findAll() {
-    return this.metadataService.findAll();
+  @Get(':subject')
+  async findAll(@Param('subject') subject: string): Promise<Record<any, any>[]> {
+    const records = await this.metadataService.findAll(subject);
+
+    if (records === undefined) throw new NotFoundException();
+    return records;
   }
-  */
 
   @Get(':subject/:id')
   async findOne(@Param('subject') subject: string, @Param('id') id: string): Promise<Record<any, any>> {

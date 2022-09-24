@@ -9,7 +9,7 @@
     "build": "tsc -p tsconfig.build.json",
     "deploy": "sls deploy",
     "format": "prettier --write \"src/**/*.ts\"",
-    "start": "copyfiles uploads/**/* .build/ && sls offline",
+    "start": "sls offline",
     "lint": "npm run all \"npm:on-* lint\"",
     "lint:fix": "npm run all \"npm:on-* lint:fix\"",
     "test": "jest",
@@ -81,5 +81,9 @@
     "**/*.(js|jsx|ts|tsx)": [
       "eslint --fix"
     ]
+  },
+  "serverless": {
+    "app": "metadata-provider-serverless",
+    "org": "buooy"
   }
 }
