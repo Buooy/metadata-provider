@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { MetadataService } from './metadata.service';
 import { NotFoundException } from '@nestjs/common';
@@ -27,12 +28,14 @@ export class MetadataController {
   @Get(':subject/generate-json')
   async generateJsonFiles(
     @Param('subject') subject: string,
+    @Query('prefix') prefix = '',
+    @Query('suffix') suffix = '',
   ): Promise<Record<any, any>[]> {
     const records = await this.metadataService.findAll(subject);
 
     if (records === undefined) throw new NotFoundException();
 
-    await this.metadataService.storeInObjectStorage(subject, records);
+    await this.metadataService.generateJson(subject, records, prefix, suffix);
 
     return records;
   }

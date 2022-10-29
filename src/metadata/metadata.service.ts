@@ -1,5 +1,4 @@
-import { dirname } from 'path';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import csv from 'csvtojson';
 import { S3 } from 'aws-sdk';
 import { InjectS3 } from 'nestjs-s3';
@@ -8,6 +7,8 @@ type MetadataRecord = Record<any, any>;
 
 @Injectable()
 export class MetadataService {
+  private readonly logger = new Logger(MetadataService.name);
+
   constructor(@InjectS3() private readonly s3: S3) {}
 
   async parseMetadata(subject: string): Promise<MetadataRecord[]> {
@@ -23,12 +24,12 @@ export class MetadataService {
 
       return records;
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
       return [];
     }
   }
 
-  async findAll(subject: string): Promise<Record<any, any>[] | undefined> {
+  async findAll(subject: string): Promise<MetadataRecord[] | undefined> {
     const records = await this.parseMetadata(subject);
     return records;
   }
@@ -36,37 +37,51 @@ export class MetadataService {
   async findOne(
     subject: string,
     id: number | string,
-  ): Promise<Record<any, any> | undefined> {
+  ): Promise<MetadataRecord | undefined> {
     const records = await this.parseMetadata(subject);
     const record = records.find((row) => row.id === id);
 
     return record;
   }
 
-  async storeInObjectStorage(
+  async generateJson(
     subject: string,
     records: MetadataRecord[],
     recordPrefix = '',
     recordSuffix = '',
   ) {
     for (const record of records) {
-      const buf = Buffer.from(JSON.stringify(record));
+      await this.storeInObjectStorage(
+        subject,
+        record,
+        recordPrefix,
+        recordSuffix,
+      );
+    }
+  }
 
-      const data = {
-        Bucket: String(process.env.S3_JSON_BUCKET),
-        Key: `${subject}/${recordPrefix}${record.id}${recordSuffix}.json`,
-        Body: buf,
-        ContentEncoding: 'base64',
-        ContentType: 'application/json',
-      };
+  async storeInObjectStorage(
+    subject: string,
+    record: MetadataRecord,
+    recordPrefix = '',
+    recordSuffix = '',
+  ) {
+    const buf = Buffer.from(JSON.stringify(record));
 
-      try {
-        const result = await this.s3.upload(data).promise();
-        console.log(result);
-      } catch (error) {
-        console.log(error);
-        console.log('Error uploading data: ', data);
-      }
+    const data = {
+      Bucket: String(process.env.S3_JSON_BUCKET),
+      Key: `${subject}/${recordPrefix}${record.id}${recordSuffix}.json`,
+      Body: buf,
+      ContentEncoding: 'base64',
+      ContentType: 'application/json',
+    };
+
+    try {
+      const result = await this.s3.upload(data).promise();
+      this.logger.log(result);
+    } catch (error) {
+      this.logger.error(error);
+      this.logger.error('Error uploading data: ', data);
     }
   }
 }
